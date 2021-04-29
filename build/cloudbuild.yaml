@@ -9,6 +9,7 @@ steps:
   - |-
     echo $REPO_NAME
     echo "HELLO"
+    git remote -v
   # - |-
   #   git clone https://github.com/$$GITHUB_USERNAME/foo-config-dev && \
   #   cd foo-config-dev 
