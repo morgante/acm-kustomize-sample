@@ -1,6 +1,6 @@
 steps:
 - name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
-  id: Kustomize render
+  id: kustomize-render
   entrypoint: 'bash'
   args:
   - '-eEuo'
