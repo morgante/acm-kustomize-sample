@@ -2,4 +2,4 @@
 
 This directory contains configuration which will be connected to Config Sync.
 
-Last sync: `f70cff5`
+Last sync: `c41d88c`
