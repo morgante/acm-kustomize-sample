@@ -8,6 +8,7 @@ steps:
   - '-c'
   - |-
     echo $REPO_NAME
+    echo "HELLO"
   # - |-
   #   git clone https://github.com/$$GITHUB_USERNAME/foo-config-dev && \
   #   cd foo-config-dev 
