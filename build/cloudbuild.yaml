@@ -12,11 +12,17 @@ steps:
     REPO_NAME=`echo $${REPO_URL} | sed -Ene's#https://github.com/([^/]*)/(.*).git#\2#p'`
     GITHUB_USERNAME=`echo $${REPO_URL} | sed -Ene's#https://github.com/([^/]*)/(.*).git#\1#p'`
 
+    git config user.name "Cloud Build"
     git remote set-url origin https://$${GITHUB_USERNAME}:$$GITHUB_TOKEN@github.com/$${GITHUB_USERNAME}/$${REPO_NAME}.git
     git remote -v
 
     sed -i "s/Last sync: \`.......\`/Last sync: \`${SHORT_SHA}\`/g" deploy-config/README.md
     git diff
+    git add deploy-config/
+
+    git commit -m "Rendered: ${SHORT_SHA}
+    Built from commit ${COMMIT_SHA} of source-config/"
+    git push origin main
 
   # - |-
   #   git clone https://github.com/$$GITHUB_USERNAME/foo-config-dev && \
