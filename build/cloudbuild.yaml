@@ -13,6 +13,7 @@ steps:
     GITHUB_USERNAME=`echo $${REPO_URL} | sed -Ene's#https://github.com/([^/]*)/(.*).git#\1#p'`
 
     git config user.name "Cloud Build"
+    git config user.email "robot@noreply.kustomize.io"
     git remote set-url origin https://$${GITHUB_USERNAME}:$$GITHUB_TOKEN@github.com/$${GITHUB_USERNAME}/$${REPO_NAME}.git
     git remote -v
 
