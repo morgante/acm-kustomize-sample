@@ -23,7 +23,7 @@ steps:
 
     git commit -m "Rendered: ${SHORT_SHA}
     Built from commit ${COMMIT_SHA} of source-config/"
-    git push origin main
+    git push origin HEAD:main
 
   # - |-
   #   git clone https://github.com/$$GITHUB_USERNAME/foo-config-dev && \
