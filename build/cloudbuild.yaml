@@ -11,7 +11,7 @@ steps:
     REPO_URL=`git config --get remote.origin.url`
     REPO=`echo $${REPO_URL} | sed -Ene's#https://github.com/([^/]*)/(.*).git#\2#p'`
     GITHUB_USERNAME=`echo $${REPO_URL} | sed -Ene's#https://github.com/([^/]*)/(.*).git#\1#p'`
-    sed -i '' "s/Last sync: \`.......\`/Last sync: \`${SHORT_SHA}\`/g" deploy-config/README.md
+    sed -i "s/Last sync: \`.......\`/Last sync: \`${SHORT_SHA}\`/g" deploy-config/README.md
     git diff
 
     git remote set-url origin https://$${GITHUB_USERNAME}:$$GITHUB_TOKEN@github.com/$${GITHUB_USERNAME}/$${REPO_NAME}.git
