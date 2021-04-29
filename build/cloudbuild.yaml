@@ -1,4 +1,4 @@
-steps: 
+steps:
 - name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
   id: Kustomize render
   entrypoint: 'bash'
@@ -7,7 +7,16 @@ steps:
   - 'pipefail'
   - '-c'
   - |-
-    git remote -v
+    kustomize build source-config --output deploy-config/
+  secretEnv: ['GITHUB_TOKEN']
+- name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
+  id: commit-output
+  entrypoint: 'bash'
+  args:
+  - '-eEuo'
+  - 'pipefail'
+  - '-c'
+  - |-
     REPO_URL=`git config --get remote.origin.url`
     REPO_NAME=`echo $${REPO_URL} | sed -Ene's#https://github.com/([^/]*)/(.*).git#\2#p'`
     GITHUB_USERNAME=`echo $${REPO_URL} | sed -Ene's#https://github.com/([^/]*)/(.*).git#\1#p'`
@@ -15,62 +24,13 @@ steps:
     git config user.name "Cloud Build"
     git config user.email "robot@noreply.kustomize.io"
     git remote set-url origin https://$${GITHUB_USERNAME}:$$GITHUB_TOKEN@github.com/$${GITHUB_USERNAME}/$${REPO_NAME}.git
-    git remote -v
 
     sed -i "s/Last sync: \`.......\`/Last sync: \`${SHORT_SHA}\`/g" deploy-config/README.md
-    git diff
     git add deploy-config/
 
     git commit -m "Rendered: ${SHORT_SHA}
     Built from commit ${COMMIT_SHA} of source-config/"
     git push origin HEAD:main
-
-  # - |-
-  #   git clone https://github.com/$$GITHUB_USERNAME/foo-config-dev && \
-  #   cd foo-config-dev 
-  #   git config user.email $$GITHUB_EMAIL
-  #   git config user.name $$GITHUB_USERNAME 
-  #   git remote set-url origin https://$$GITHUB_USERNAME:$$GITHUB_TOKEN@github.com/$$GITHUB_USERNAME/foo-config-dev.git
-  #   cd ..
-
-  #   kustomize build overlays/dev --output foo-config-dev/
-  #   cd foo-config-dev 
-
-  #   rm README.md 
-  #   echo "Update: ${SHORT_SHA}" > README.md
-
-  #   git add . && \
-  #   git commit -m "Rendered: ${SHORT_SHA}
-  #   Built from commit ${COMMIT_SHA} of repository foo-config-source - main branch 
-  #   Author: $(git log --format='%an <%ae>' -n 1 HEAD)" && \
-  #   git push origin main
-  secretEnv: ['GITHUB_TOKEN']
-# - name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
-#   id: Render foo-config-prod
-#   entrypoint: 'bash'
-#   args:
-#   - '-eEuo'
-#   - 'pipefail'
-#   - '-c'
-#   - |-
-#     git clone https://github.com/$$GITHUB_USERNAME/foo-config-prod
-#     cd foo-config-prod
-#     git config user.email $$GITHUB_EMAIL
-#     git config user.name $$GITHUB_USERNAME 
-#     git remote set-url origin https://$$GITHUB_USERNAME:$$GITHUB_TOKEN@github.com/$$GITHUB_USERNAME/foo-config-prod.git
-#     cd ..
-
-#     kustomize build overlays/prod --output foo-config-prod/
-#     cd foo-config-prod 
-
-#     rm README.md 
-#     echo "Update: ${SHORT_SHA}" > README.md
-
-#     git add . && \
-#     git commit -m "Rendered: ${SHORT_SHA}
-#     Built from commit ${COMMIT_SHA} of repository foo-config-source - main branch 
-#     Author: $(git log --format='%an <%ae>' -n 1 HEAD)" && \
-#     git push origin main
   secretEnv: ['GITHUB_TOKEN']
 availableSecrets:
   secretManager:
